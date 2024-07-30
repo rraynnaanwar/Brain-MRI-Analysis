@@ -6,5 +6,5 @@ import timm
     
 class BrainMRIClassifier(nn.Module):
     #where we define all the parts of the model
-    def __init__(self, numClasses=2):
+    def __init__(self):
         
