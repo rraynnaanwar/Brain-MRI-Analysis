@@ -1,5 +1,7 @@
 from torchvision.datasets import ImageFolder
 from torch.utils.data import Dataset, DataLoader
+import sys
+sys.path.append('../')
 
 class BrainMRIData(Dataset):
     def __init__(self, data_dir, transform=None):
