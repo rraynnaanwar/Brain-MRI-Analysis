@@ -10,7 +10,7 @@ from PIL import Image
 
 
 def processData(dir):
-    transform = transforms.Compose([transforms.Resize((225,225)), transforms.ToTensor()])
+    transform = transforms.Compose([transforms.Resize((200,200)), transforms.ToTensor(), transforms.Normalize(mean=[0.2802, 0.2804, 0.2806], std=[0.2664, 0.2664, 0.2665])])
     dataSet = BrainMRIData(dir, transform)
     return dataSet
 

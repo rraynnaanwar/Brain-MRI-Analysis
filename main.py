@@ -13,11 +13,13 @@ def main():
     valSet = processData(val_dir)
     trainLoader = DataLoader(trainSet, batch_size = 64, shuffle=True)
     valLoader = DataLoader(valSet, batch_size = 64, shuffle=True)
+    
     model = BrainMRIClassifier(numClasses=2).to('cuda')
     lossFunction = nn.CrossEntropyLoss()
-    lr = 0.01
+    lr = 0.001
     optimizer = torch.optim.SGD(model.parameters(), lr=lr)
-    num_epochs = 10
+    num_epochs = 30
+
     for epoch in range(num_epochs):
         model.train()  # Set the model to training mode
         running_loss = 0.0

@@ -10,81 +10,63 @@ class BrainMRIClassifier(nn.Module):
         super(BrainMRIClassifier, self).__init__()
 
         #first convolutional layer, takes in 3 input channels (RGB)
-        self.conv_layer1 = nn.Conv2d(in_channels=3, out_channels=32, kernel_size=4, padding=1)
-        self.relu1 = nn.ReLU()
-        self.max_pool1 = nn.MaxPool2d(kernel_size=3, stride=2)
-        
-        self.conv_layer2 = nn.Conv2d(in_channels=32, out_channels=64, kernel_size=4, padding=1)
-        self.relu2 = nn.ReLU()
-        self.max_pool2 = nn.MaxPool2d(kernel_size=3, stride=2)
+        self.conv1 = nn.Conv2d(in_channels=3, out_channels=32, kernel_size=5, stride=1, padding=0)
+        self.pool = nn.MaxPool2d(kernel_size=2, stride=2, padding=0)
+        self.dropout1 = nn.Dropout(p=0.2)
 
-        self.conv_layer3 = nn.Conv2d(in_channels=64, out_channels=192, kernel_size=3, padding=1)
-        self.relu3 = nn.ReLU()
-        self.max_pool3 = nn.MaxPool2d(kernel_size = 3, stride = 2)
+        self.conv2 = nn.Conv2d(in_channels=32, out_channels=64, kernel_size=3, stride=1, padding=0)
+        self.dropout2 = nn.Dropout(p=0.2)
 
-        self.conv_layer4 = nn.Conv2d(in_channels =192, out_channels=384, kernel_size=3, padding = 1)
-        self.relu4 = nn.ReLU()
-        self.max_pool4 = nn.MaxPool2d(kernel_size = 3, stride = 2)
+        self.conv3 = nn.Conv2d(in_channels=64, out_channels=128, kernel_size=3, stride=1, padding=0)
+        self.dropout3 = nn.Dropout(p=0.2)
 
-        self.conv_layer5 = nn.Conv2d(in_channels = 384, out_channels= 256, kernel_size=3, padding = 1)
-        self.relu5  = nn.ReLU()
-        self.max_pool5 = nn.MaxPool2d(kernel_size=3, stride = 2)
+        self.conv4 = nn.Conv2d(in_channels=128, out_channels=256, kernel_size=3, stride=1, padding=0)
+        self.dropout4 = nn.Dropout(p=0.2)
 
-        self.conv_layer6 = nn.Conv2d(in_channels = 256, out_channels=256, kernel_size=3, padding = 1)
-        self.relu6 = nn.ReLU()
-        self.max_pool6 = nn.MaxPool2d(kernel_size=3, stride = 2)
-
-        self.dropout6 = nn.Dropout(p=0.5)
         self.flatten = nn.Flatten()
-
-        self.fc7 = nn.Linear(in_features=1024,out_features=512)
-        self.relu7 = nn.ReLU()
-        
-        self.fc8 = nn.Linear(in_features=512, out_features=256)
-        self.relu8 = nn.ReLU()
-
-        self.dropout9 = nn.Dropout(p=0.5)
-        self.fc9 = nn.Linear(in_features=256, out_features=numClasses)
+        self.fc1 = nn.Linear(in_features=25600, out_features=512)  # Adjust the input size based on your image size and pooling
+        self.dropout5 = nn.Dropout(p=0.5)
+        self.fc2 = nn.Linear(in_features=512, out_features=numClasses)
 
     def forward(self, x):
-        # Forward pass through the convolutional layers
-        x = self.conv_layer1(x)
-        x = self.relu1(x)
-        x = self.max_pool1(x)
-        
-        x = self.conv_layer2(x)
-        x = self.relu2(x)
-        x = self.max_pool2(x)
+        x = self.conv1(x)
+        #print("Shape after conv1:", x.shape)
+        x = torch.relu(x)
+        x = self.pool(x)
+        #print("Shape after pool1:", x.shape)
+        x = self.dropout1(x)
 
-        x = self.conv_layer3(x)
-        x = self.relu3(x)
-        x = self.max_pool3(x)
+        x = self.conv2(x)
+        #print("Shape after conv2:", x.shape)
+        x = torch.relu(x)
+        x = self.pool(x)
+        #print("Shape after pool2:", x.shape)
+        x = self.dropout2(x)
 
-        x = self.conv_layer4(x)
-        x = self.relu4(x)
-        x = self.max_pool4(x)
+        x = self.conv3(x)
+       # print("Shape after conv3:", x.shape)
+        x = torch.relu(x)
+        x = self.pool(x)
+       # print("Shape after pool3:", x.shape)
+        x = self.dropout3(x)
 
-        x = self.conv_layer5(x)
-        x = self.relu5(x)
-        x = self.max_pool5(x)
+        x = self.conv4(x)
+        #print("Shape after conv4:", x.shape)
+        x = torch.relu(x)
+        x = self.pool(x)
+       # print("Shape after pool4:", x.shape)
+        x = self.dropout4(x)
 
-        x = self.conv_layer6(x)
-        x = self.relu6(x)
-        x = self.max_pool6(x)
-
-        # Flatten the output for the fully connected layers
         x = self.flatten(x)
-        
-        # Forward pass through the fully connected layers
-        x = self.dropout6(x)
-        x = self.fc7(x)
-        x = self.relu7(x)
-        x = self.fc8(x)
-        x = self.relu8(x)
-        x = self.dropout9(x)
-        x = self.fc9(x)
-
+        #print("Shape after flatten:", x.shape)
+        x = self.fc1(x)
+        #print("Shape after fc1:", x.shape)
+        x = torch.relu(x)
+        x = self.dropout5(x)
+        x = self.fc2(x)
+        #print("Shape after fc2:", x.shape)
         return x
+
 
 
 
