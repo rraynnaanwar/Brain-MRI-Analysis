@@ -16,9 +16,9 @@ def main():
     
     model = BrainMRIClassifier(numClasses=2).to('cuda')
     lossFunction = nn.CrossEntropyLoss()
-    lr = 0.001
+    lr = 0.01
     optimizer = torch.optim.SGD(model.parameters(), lr=lr)
-    num_epochs = 30
+    num_epochs = 50
 
     for epoch in range(num_epochs):
         model.train()  # Set the model to training mode
